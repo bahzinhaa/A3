@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labirinto A3</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1><strong>Labirinto A3:</strong></h1>
+    <div>
+        <label class="textosecundario">Tamanho do labirinto :</label>
+        <input type="number" id="size" value="10" min="5" max="20"><br>
+        
+        <label class="textosecundario">Posição inicial (x, y):</label>
+        <input type="number" id="start_x" value="1" min="1" max="20">
+        <input type="number" id="start_y" value="1" min="1" max="20"><br>
+
+        <label class="textosecundario">Posição de saída (x, y):</label>
+        <input type="number" id="exit_x" value="10" min="1" max="20">
+        <input type="number" id="exit_y" value="10" min="1" max="20"><br>
+
+        <label class="textosecundario">Número de paredes:</label>
+        <input type="number" id="walls" value="20" min="10" max="25"><br>
+
+        <label class="textosecundario">Pontos de Energia (+5):</label>
+        <input type="number" id="energy5" value="5"><br>
+
+        <label class="textosecundario">Pontos de Energia (+10):</label>
+        <input type="number" id="energy10" value="3"><br>
+
+        <button onclick="generateMaze()">Gerar o Labirinto</button>
+        <button onclick="solveMaze('bfs')">Resolver com o BFS</button>
+        <button onclick="solveMaze('astar')">Resolver com A</button>
+    </div>
+
+    <h2></h2>
+    <div id="maze" class="grid"></div>
+
+    <script>
+        function generateMaze() {
+            const size = document.getElementById("size").value;
+            const start_x = document.getElementById("start_x").value;
+            const start_y = document.getElementById("start_y").value;
+            const exit_x = document.getElementById("exit_x").value;
+            const exit_y = document.getElementById("exit_y").value;
+            const walls = document.getElementById("walls").value;
+            const energy5 = document.getElementById("energy5").value;
+            const energy10 = document.getElementById("energy10").value;
+            
+            fetch('/generate_maze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ size, start_x, start_y, exit_x, exit_y, walls, energy5, energy10 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayMaze(data.maze);
+            });
+        }
+
+        function displayMaze(maze) {
+            const mazeDiv = document.getElementById("maze");
+            mazeDiv.innerHTML = "";
+            maze.forEach(row => {
+                const rowDiv = document.createElement("div");
+                rowDiv.classList.add("row");
+                row.forEach(cell => {
+                    const cellDiv = document.createElement("div");
+                    cellDiv.classList.add("cell");
+                    cellDiv.innerHTML = cell;
+                    rowDiv.appendChild(cellDiv);
+                });
+                mazeDiv.appendChild(rowDiv);
+            });
+        }
+
+        function solveMaze(algorithm) {
+            fetch(`/solve_maze?algorithm=${algorithm}`)
+            .then(response => response.json())
+            .then(data => {
+                displayMaze(data.maze);
+                highlightPath(data.path);
+            });
+        }
+
+        function highlightPath(path) {
+            path.forEach(([i, j]) => {
+                const row = document.getElementById("maze").children[i];
+                const cell = row.children[j];
+                cell.style.backgroundColor = "pink";
+            });
+        }
+    </script>
+</body>
+</html>

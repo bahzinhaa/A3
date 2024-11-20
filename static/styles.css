@@ -1,0 +1,36 @@
+.grid {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    width: 30px;
+    height: 30px;
+    border: 1px solid black;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+.cell:nth-child(odd) {
+    background-color: rgb(137, 145, 153);
+}
+
+body{
+    background-color: rgb(137, 145, 153);
+}
+
+h1{
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+color: pink
+
+
+}
+
+.textosecundario{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
